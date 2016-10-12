@@ -1,29 +1,27 @@
 import rg
 import math
+import random
+
+all_locs = [(x, y) for x in xrange(19) for y in xrange(19)]
+# set of all spawn locations
+all_locs = {loc for loc in all_locs if 'invalid' not in rg.loc_types(loc)}
 
 
 class Robot:
-    def load(self):
+    def __init__(self):
+        self.weight = list()
+
+    def load(self, game):
+        with open("weights", "r+") as file:
+            line = file.readline()
+            for a in line.split(","):
+                self.weight.append(a)
 
     def sigmoid(x):
         return 1 / (1 + math.exp(-x))
 
     def act(self, game):
-        # if we're in the center, stay put
-        if self.location == rg.CENTER_POINT:
-            return ['guard']
+        self.load(game)
 
-        # if there are enemies around, attack them
-        num = 0
-        for loc, bot in game.robots.iteritems():
-            if bot.player_id != self.player_id:
-                if rg.dist(loc, self.location) <= 1:
-                    num = num+1
-                    if num >3:
-                        return['suicide']
-                    else:
-                        return ['attack', loc]
-
-        # move toward the center
-        return ['move', rg.toward(self.location, rg.CENTER_POINT)]
+        print self.weight
         pass
